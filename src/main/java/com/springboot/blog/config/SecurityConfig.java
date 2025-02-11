@@ -1,0 +1,88 @@
+package com.springboot.blog.config;
+
+import com.springboot.blog.security.JwtAuthenticationEntryPoint;
+import com.springboot.blog.security.JwtAuthenticationFilter;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+@EnableMethodSecurity
+@SecurityScheme(
+        name = "Bearer Authentication",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        scheme = "bearer"
+)
+public class SecurityConfig {
+
+    private JwtAuthenticationEntryPoint authenticationEntryPoint;
+
+    private JwtAuthenticationFilter authenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationEntryPoint authenticationEntryPoint,
+                          JwtAuthenticationFilter authenticationFilter){
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.authenticationFilter = authenticationFilter;
+    }
+    // Configure the AuthenticationManager
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests((authorize) ->
+                        // Authorize all the incoming Http requests
+                        authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                                // All the users can access the URL that starts with api/auth/**
+                                .requestMatchers("api/auth/**").permitAll()
+                                // Provide public access to all the URLs that starts with swagger hyphen UI.
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                // Get the API documentation i JSON format. It can be accessed by anyone.
+                                .requestMatchers("/v3/api-docs/**").permitAll()
+                        .anyRequest().authenticated()
+                ).exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        // Execute this filter before executing Spring Security's filters
+        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    // Second option
+    // Create couple of users(in memory objects) and store them
+//    @Bean
+//    public UserDetailsService userDetailService(){
+//        UserDetails admin = org.springframework.security.core.userdetails.User.builder()
+//                .username("admin")
+//                .password(passwordEncoder().encode("admin"))
+//                .roles("ADMIN")
+//                .build();
+////
+////
+////
+//////        com.springboot.blog.entity.User user = new User();
+//////        user.setUsername(admin.getUsername());
+//////        user.setPassword(admin.getPassword());
+//////        user.setRoles(admin.getAuthorities().equals("ROLE_ADMIN"));
+//////       userRepository.save(admin);
+////
+//        return new InMemoryUserDetailsManager(admin);
+//    }
+}
