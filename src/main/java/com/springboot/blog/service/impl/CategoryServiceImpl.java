@@ -48,11 +48,8 @@ public class CategoryServiceImpl implements CategoryService {
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-
         Page<Category> allCategories = categoryRepository.findAll(pageable);
-
         List<Category> categoryList = allCategories.getContent();
-
         List<CategoryDto> content = categoryList.stream().map((category) -> modelMapper.map(category, CategoryDto.class))
                 .collect(Collectors.toList());
 
@@ -76,7 +73,6 @@ public class CategoryServiceImpl implements CategoryService {
         category.setName(categoryDto.getName());
         category.setDescription(categoryDto.getDescription());
         category.setId(categoryId);
-
         Category updatedCategory = categoryRepository.save(category);
 
         return modelMapper.map(updatedCategory, CategoryDto.class);

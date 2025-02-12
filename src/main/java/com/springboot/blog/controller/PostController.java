@@ -40,7 +40,6 @@ public class PostController {
             name = "Bearer Authentication" // Pass the scheme name
     )
 
-    //Only admin can access this create post api
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/api/posts")
     public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
@@ -93,13 +92,11 @@ public class PostController {
             name = "Bearer Authentication" // Pass the scheme name
     )
 
-    //Only admin can access this update post api
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/api/posts/{id}")
     public ResponseEntity<PostDto> updatePost(@PathVariable long id, @Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.updatePost(id, postDto), HttpStatus.OK);
     }
-
 
     @Operation(
             summary = "Delete Post REST API",
@@ -112,8 +109,6 @@ public class PostController {
     @SecurityRequirement(
             name = "Bearer Authentication" // Pass the scheme name
     )
-
-    //Only admin can access this delete post api
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/api/posts/{id}")
     public ResponseEntity<String> deletePost(@PathVariable long id) {
@@ -132,7 +127,6 @@ public class PostController {
             description = "Http Status 200 OK"
     )
 
-    //http://localhost:8080/api/posts/category/3
     @GetMapping("/api/posts/category/{id}")
     public ResponseEntity<List<PostDto>> getPostsByCategoryId(@PathVariable("id") Long categoryId) {
         return new ResponseEntity<>(postService.getPostsByCategory(categoryId), HttpStatus.OK);

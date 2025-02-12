@@ -26,16 +26,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 )
 public class SecurityConfig {
 
-    private JwtAuthenticationEntryPoint authenticationEntryPoint;
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
-    private JwtAuthenticationFilter authenticationFilter;
+    private final JwtAuthenticationFilter authenticationFilter;
 
     public SecurityConfig(JwtAuthenticationEntryPoint authenticationEntryPoint,
                           JwtAuthenticationFilter authenticationFilter){
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authenticationFilter = authenticationFilter;
     }
-    // Configure the AuthenticationManager
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
@@ -59,30 +58,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        // Execute this filter before executing Spring Security's filters
         http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
-    // Second option
-    // Create couple of users(in memory objects) and store them
-//    @Bean
-//    public UserDetailsService userDetailService(){
-//        UserDetails admin = org.springframework.security.core.userdetails.User.builder()
-//                .username("admin")
-//                .password(passwordEncoder().encode("admin"))
-//                .roles("ADMIN")
-//                .build();
-////
-////
-////
-//////        com.springboot.blog.entity.User user = new User();
-//////        user.setUsername(admin.getUsername());
-//////        user.setPassword(admin.getPassword());
-//////        user.setRoles(admin.getAuthorities().equals("ROLE_ADMIN"));
-//////       userRepository.save(admin);
-////
-//        return new InMemoryUserDetailsManager(admin);
-//    }
 }

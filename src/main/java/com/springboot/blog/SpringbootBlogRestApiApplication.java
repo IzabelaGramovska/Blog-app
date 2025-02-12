@@ -11,15 +11,11 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,12 +39,10 @@ import java.util.Set;
 		externalDocs = @ExternalDocumentation(
 				description = "Spring Boot Blog App Documentation",
 				url = "Here you can provide the github repository link of the current REST APIs"
-)
+		)
 )
 
-// Make the class to implements CommandLineRunner
 public class SpringbootBlogRestApiApplication {
-
 	@Bean
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
@@ -60,35 +54,35 @@ public class SpringbootBlogRestApiApplication {
 	@Autowired
 	private UserRepository userRepository;
 
-	@Bean // @Bean will configure this instance as a Spring bean/component
+	@Bean
 	public static PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
-	//@Override
-	//public void run(String... args) throws Exception {
-		//Role adminRole = new Role();
-		//adminRole.setName("ROLE_ADMIN");
-		//roleRepository.save(adminRole);
+	public void run(String... args) throws Exception {
+		if (roleRepository.findByName("ROLE_ADMIN").isEmpty() && userRepository.findByEmail("admin@gmail.com").isEmpty()) {
+			Role adminRole = new Role();
+			adminRole.setName("ROLE_ADMIN");
+			roleRepository.save(adminRole);
 
-		//Role userRole = new Role();
-		//userRole.setName("ROLE_USER");
-		//roleRepository.save(userRole);
+			Role userRole = new Role();
+			userRole.setName("ROLE_USER");
+			roleRepository.save(userRole);
 
-		//Set<Role> roles = new HashSet<>();
-		//roles.add(adminRole);
+			Set<Role> roles = new HashSet<>();
+			roles.add(adminRole);
 
-		//User user = new User();
-		//user.setName("admin");
-		//user.setUsername("admin");
-		//user.setEmail("admin@gmail.com");
-		//user.setPassword(passwordEncoder().encode("admin"));
-		//user.setRoles(roles);
+			User user = new User();
+			user.setName("admin");
+			user.setUsername("admin");
+			user.setEmail("admin@gmail.com");
+			user.setPassword(passwordEncoder().encode("admin"));
+			user.setRoles(roles);
 
-		//userRepository.save(user);
-	//}
-
-	public static void main(String[] args) {
+			userRepository.save(user);
+		}
+	}
+		public static void main(String[] args) {
 		SpringApplication.run(SpringbootBlogRestApiApplication.class, args);
 	}
 }

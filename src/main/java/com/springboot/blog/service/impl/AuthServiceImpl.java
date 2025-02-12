@@ -22,11 +22,11 @@ import java.util.Set;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-    private AuthenticationManager authenticationManager;
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
-    private JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public AuthServiceImpl(
             AuthenticationManager authenticationManager,
@@ -43,18 +43,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    // Log in method
     public String login(LoginDto loginDto) {
-        // Authenticate the login request with the database
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsernameOrEmail(), loginDto.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Generate the JWT token and return it to the client
-        String token = jwtTokenProvider.generateToken(authentication);
-
-        return token;
+        return jwtTokenProvider.generateToken(authentication);
     }
 
     @Override
@@ -71,14 +66,12 @@ public class AuthServiceImpl implements AuthService {
         user.setName(registerDto.getName());
         user.setUsername(registerDto.getUsername());
         user.setEmail(registerDto.getEmail());
-        // Encode the password
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName("ROLE_USER").get();
         roles.add(userRole);
         user.setRoles(roles);
-
         userRepository.save(user);
 
         return "User registered successfully!";

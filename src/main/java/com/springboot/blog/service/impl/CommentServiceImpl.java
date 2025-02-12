@@ -49,7 +49,6 @@ public class CommentServiceImpl implements CommentService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort); // Create a pageable instance
         Page<Comment> allComments = commentRepository.findByPostId(postId, pageable); // Get all of the comments in pageable format
         List<Comment> pagesContent = allComments.getContent(); // Get the content of all the comments
-
         List<CommentDto> allCommentDtos = pagesContent.stream().map(this::mapToDto).collect(Collectors.toList());
 
         CommentResponse commentResponse = new CommentResponse();
@@ -116,15 +115,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private CommentDto mapToDto(Comment comment) {
-        CommentDto commentDto = mapper.map(comment, CommentDto.class);
-
-        return commentDto;
+        return mapper.map(comment, CommentDto.class);
     }
 
     private Comment mapToEntity(CommentDto commentDto) {
-       Comment comment = mapper.map(commentDto, Comment.class);
-
-       return comment;
+        return mapper.map(commentDto, Comment.class);
     }
 
 

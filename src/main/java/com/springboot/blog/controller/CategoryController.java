@@ -89,7 +89,6 @@ public class CategoryController {
     @SecurityRequirement(
             name = "Bearer Authentication" // Pass the scheme name
     )
-    // Build Update Category REST API
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("{id}")
     public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryDto,
