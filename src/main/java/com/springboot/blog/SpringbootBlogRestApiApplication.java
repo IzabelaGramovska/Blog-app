@@ -66,27 +66,27 @@ public class SpringbootBlogRestApiApplication {
 	}
 
 	//@Override
-	public void run(String... args) throws Exception {
-		Role adminRole = new Role();
-		adminRole.setName("ROLE_ADMIN");
-		roleRepository.save(adminRole);
+	//public void run(String... args) throws Exception {
+		//Role adminRole = new Role();
+		//adminRole.setName("ROLE_ADMIN");
+		//roleRepository.save(adminRole);
 
-		Role userRole = new Role();
-		userRole.setName("ROLE_USER");
-		roleRepository.save(userRole);
+		//Role userRole = new Role();
+		//userRole.setName("ROLE_USER");
+		//roleRepository.save(userRole);
 
-		Set<Role> roles = new HashSet<>();
-		roles.add(adminRole);
+		//Set<Role> roles = new HashSet<>();
+		//roles.add(adminRole);
 
-		User user = new User();
-		user.setName("admin");
-		user.setUsername("admin");
-		user.setEmail("admin@gmail.com");
-		user.setPassword(passwordEncoder().encode("admin"));
-		user.setRoles(roles);
+		//User user = new User();
+		//user.setName("admin");
+		//user.setUsername("admin");
+		//user.setEmail("admin@gmail.com");
+		//user.setPassword(passwordEncoder().encode("admin"));
+		//user.setRoles(roles);
 
-		userRepository.save(user);
-	}
+		//userRepository.save(user);
+	//}
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringbootBlogRestApiApplication.class, args);
